@@ -24,7 +24,7 @@ section "section"
   { t.push(["bodies"]); return t.concat([['line', line], ['col', column]]) }
 
 /*-------------------------------------------------------------------------------------------------------------------------------------
-   sec_tag_start is defined as matching an opening brace followed by one of #?^<+@% plus identifier plus context plus param 
+   sec_tag_start is defined as matching an opening brace followed by one of #?^<+@% plus identifier plus context plus param
    followed by 0 or more white spaces
 ---------------------------------------------------------------------------------------------------------------------------------------*/
 sec_tag_start
@@ -32,7 +32,7 @@ sec_tag_start
   { return [t, n, c, p] }
 
 /*-------------------------------------------------------------------------------------------------------------------------------------
-   end_tag is defined as matching an opening brace followed by a slash plus 0 or more white spaces plus identifier followed 
+   end_tag is defined as matching an opening brace followed by a slash plus 0 or more white spaces plus identifier followed
    by 0 or more white spaces and ends with closing brace
 ---------------------------------------------------------------------------------------------------------------------------------------*/
 end_tag "end tag"
@@ -68,7 +68,7 @@ reference "reference"
   { return ["reference", n, f].concat([['line', line], ['col', column]]) }
 
 /*-------------------------------------------------------------------------------------------------------------------------------------
-  partial is defined as matching a opening brace followed by a > plus anything that matches with key or inline plus 
+  partial is defined as matching a opening brace followed by a > plus anything that matches with key or inline plus
   context followed by slash and closing brace
 ---------------------------------------------------------------------------------------------------------------------------------------*/
 partial "partial"
@@ -106,7 +106,7 @@ integer "integer"
   = digits:[0-9]+ { return parseInt(digits.join(""), 10); }
 
 /*-------------------------------------------------------------------------------------------------------------------------------------
-  path is defined as matching a key plus one or more characters of key preceded by a dot 
+  path is defined as matching a key plus one or more characters of key preceded by a dot
 ---------------------------------------------------------------------------------------------------------------------------------------*/
 path "path"
   = k:key? d:(array_part / array)+ {
@@ -125,11 +125,16 @@ path "path"
   }
 
 /*-------------------------------------------------------------------------------------------------------------------------------------
-   key is defined as a character matching a to z, upper or lower case, followed by 0 or more alphanumeric characters  
+   key is defined as a character matching a to z, upper or lower case, followed by 0 or more alphanumeric characters
 ---------------------------------------------------------------------------------------------------------------------------------------*/
 key "key"
   = h:[a-zA-Z_$] t:[0-9a-zA-Z_$-]*
   { return h + t.join('') }
+  / keyLiteral
+
+keyLiteral "keyLiteral"
+  = '["' k:(!'"]' char:. {return char})* '"]'
+  { return k.join('');}
 
 array "array"
   = i:( lb a:( n:([0-9]+) {return n.join('')} / identifier) rb  {return a; }) nk: array_part? { if(nk) { nk.unshift(i); } else {nk = [i] } return nk; }
@@ -138,7 +143,7 @@ array_part "array_part"
   = d:("." k:key {return k})+ a:(array)? { if (a) { return d.concat(a); } else { return d; } }
 
 /*-------------------------------------------------------------------------------------------------------------------------------------
-   inline params is defined as matching two double quotes or double quotes plus literal followed by closing double quotes or  
+   inline params is defined as matching two double quotes or double quotes plus literal followed by closing double quotes or
    double quotes plus inline_part followed by the closing double quotes
 ---------------------------------------------------------------------------------------------------------------------------------------*/
 inline "inline"
@@ -147,7 +152,7 @@ inline "inline"
   / '"' p:inline_part+ '"'  { return ["body"].concat(p).concat([['line', line], ['col', column]]) }
 
 /*-------------------------------------------------------------------------------------------------------------------------------------
-  inline_part is defined as matching a special or reference or literal  
+  inline_part is defined as matching a special or reference or literal
 ---------------------------------------------------------------------------------------------------------------------------------------*/
 inline_part
   = special / reference / l:literal { return ["buffer", l] }
@@ -176,7 +181,7 @@ comment "comment"
   { return ["comment", c.join('')].concat([['line', line], ['col', column]]) }
 
 /*-------------------------------------------------------------------------------------------------------------------------------------
-   tag is defined as matching an opening brace plus any of #?^><+%:@/~% plus 0 or more whitespaces plus any character or characters that 
+   tag is defined as matching an opening brace plus any of #?^><+%:@/~% plus 0 or more whitespaces plus any character or characters that
    doesn't match rd or eol plus 0 or more whitespaces plus a closing brace
 ---------------------------------------------------------------------------------------------------------------------------------------*/
 tag
@@ -195,7 +200,7 @@ lb
 rb
   = "]"
 
-eol 
+eol
   = "\n"        //line feed
   / "\r\n"      //carriage + line feed
   / "\r"        //carriage return

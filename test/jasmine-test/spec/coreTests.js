@@ -692,7 +692,43 @@ var coreTests = [
     ]
   },
 /**
- * CONDITINOAL TESTS
+ * LITERAL KEY TESTS
+ */
+ {
+   name: "literal key tests",
+   tests: [
+     {
+        name: "simple keys but written as literal",
+        source: "hello {[\"name\"]}",
+        context:  { "name": "Bob" },
+        expected: "hello Bob",
+        message: "should be use literals"
+     },
+     {
+        name: "dots in keys",
+        source: "hello {[\"a.b.c\"]}",
+        context:  { "a.b.c": "Bob" },
+        expected: "hello Bob",
+        message: "should be able to look inside keys with dots"
+     },
+     {
+        name: "crazy chars in keys",
+        source: "hello {[\"#?!<>|]a.b.c\"]}",
+        context:  { "#?!<>|]a.b.c": "Bob" },
+        expected: "hello Bob",
+        message: "should be able to look inside keys with odd chars"
+     },
+     {
+       name: "both literal and path dots",
+       source: "hello {[\"o.u.t.e.r\"].inner} and {[\"o.u.t.e.r\"].[\"i.n.n.e.r\"]}",
+        context:  { "o.u.t.e.r": {"inner": "Bob", "i.n.n.e.r": "Joe"} },
+        expected: "hello Bob and Joe",
+        message: "should be able to call key literals with paths"
+     }
+   ]
+ },
+/**
+ * CONDITIONAL TESTS
  */
   {
     name: "conditional tests",
@@ -958,7 +994,7 @@ var coreTests = [
 /**
  * PARTIAL DEFINITIONS TESTS
  */
-  { 
+  {
     name: "partial definitions",
     tests: [
       {
