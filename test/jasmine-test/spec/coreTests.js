@@ -712,6 +712,13 @@ var coreTests = [
         message: "should be able to look inside keys with dots"
      },
      {
+        name: "keys followed by dots in key",
+        source: "hello {outer[\"a.b.c\"]}",
+        context:  { "outer": {"a.b.c": "Bob" }},
+        expected: "hello Bob",
+        message: "should be able to look inside keys with dots"
+     },
+     {
         name: "crazy chars in keys",
         source: "hello {[\"#?!<>|]a.b.c\"]}",
         context:  { "#?!<>|]a.b.c": "Bob" },
